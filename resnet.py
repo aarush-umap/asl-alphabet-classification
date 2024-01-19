@@ -22,17 +22,7 @@ class ResNet(Model):
     def __init__(self, img_shape, num_classes, repeats=[3,4,6,3]):
         super(ResNet, self).__init__(name='ResNet')
         self.repeats = repeats
-        # Expect (X, Y, C)
-        # X, Y, C = img_shape
-        # if X == 224 and Y == X:
-        #     padding = 3
-        # elif X == 200 and Y == X:
-        #     # padding = (tf.abs(222 - X) + 7) // 2
-        #     padding = (230 - X)/2
-        # else:
-        #     print(f'IMAGE SHAPE: {img_shape}, expecting dimensions (224, 224, 3)')
-        #     return
-        
+                
         self.all_layers = {}
         self.all_layers['conv_1'] = Conv2DWithBN(filters=64, kernel_size=7, strides=2, padding='same')
         self.all_layers['max_pool'] = MaxPooling2D(pool_size=3, strides=2, padding='same')
@@ -43,10 +33,8 @@ class ResNet(Model):
                 curr_stride = 2
                 if j != 0 or i == 0:
                     curr_stride = 1
-                fs = filter_sizes[i]
-                # if j != 0:
-                #     fs = filter_sizes[i] * 4
-                self.all_layers[f'conv_{i+2}_{j+1}'] = Block(filter_size=fs, stride=curr_stride, name=(f'conv_{i+2}_{j+1}')) # TODO: fix filter size
+                    
+                self.all_layers[f'conv_{i+2}_{j+1}'] = Block(filter_size=filter_sizes[i], stride=curr_stride, name=(f'conv_{i+2}_{j+1}')) # TODO: fix filter size
         
         self.all_layers['global_avg_pool'] = GlobalAveragePooling2D()
         self.all_layers['fully_connected'] = Dense(units=num_classes, activation='softmax')
