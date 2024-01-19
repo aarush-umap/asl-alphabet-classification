@@ -46,7 +46,7 @@ class ResNet(Model):
                 fs = filter_sizes[i]
                 # if j != 0:
                 #     fs = filter_sizes[i] * 4
-                self.all_layers[f'conv_{i+1}_{j+1}'] = Block(filter_size=fs, stride=curr_stride) # TODO: fix filter size
+                self.all_layers[f'conv_{i+1}_{j+1}'] = Block(filter_size=fs, stride=curr_stride, name=(f'conv_{i+1}_{j+1}')) # TODO: fix filter size
         
         self.all_layers['global_avg_pool'] = GlobalAveragePooling2D()
         self.all_layers['fully_connected'] = Dense(units=num_classes, activation='softmax')
@@ -62,18 +62,15 @@ class ResNet(Model):
         return x
 
 class Block(Layer):
-    def __init__(self, filter_size, stride):
-        super(Block, self).__init__()
+    def __init__(self, filter_size, stride, name):
+        super(Block, self).__init__(name=name)
         self.fs = filter_size
         self.layers = {}
         self.layers['conv_1'] = Conv2DWithBN(filters=filter_size, kernel_size=1, strides=1, padding='valid')
         self.layers['conv_2'] = Conv2DWithBN(filters=filter_size, kernel_size=3, strides=stride, padding='same')
         self.layers['conv_3'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=1, padding='valid')
-       
-        print(f'conv_1: Conv2DWithBN(filters={filter_size}, kernel_size={1}, strides={1}, padding=valid)')
-        print(f'conv_2: Conv2DWithBN(filters={filter_size}, kernel_size={3}, strides={stride}, padding=same)')
-        print(f'conv_3:Conv2DWithBN(filters=({filter_size} * 4), kernel_size={1}, strides={1}, padding=valid)')
-        print('relu')
+        self.layers['relu'] = ReLU()
+        self.layers['transform'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=stride, padding='same')
         if stride == 1: self.dotted = False
         else: self.dotted = True
         
