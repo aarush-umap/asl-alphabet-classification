@@ -70,6 +70,13 @@ class Block(Layer):
         self.layers['conv_2'] = Conv2DWithBN(filters=filter_size, kernel_size=3, strides=stride, padding='same')
         self.layers['conv_3'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=1, padding='valid')
         self.layers['relu'] = ReLU()
+
+        print(f'\nBlock: {name}')
+        print(f'conv_1: Conv2DWithBN(filters={filter_size}, kernel_size={1}, strides={1}, padding=valid)')
+        print(f'conv_2: Conv2DWithBN(filters={filter_size}, kernel_size={3}, strides={stride}, padding=same)')
+        print(f'conv_3:Conv2DWithBN(filters=({filter_size} * 4), kernel_size={1}, strides={1}, padding=valid)')
+        print('relu')
+
         self.layers['transform'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=stride, padding='same')
         if stride == 1: self.dotted = False
         else: self.dotted = True
