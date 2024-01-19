@@ -91,17 +91,8 @@ class Block(Layer):
 def ResNet50(img_shape, num_classes):
     return ResNet(img_shape=img_shape, num_classes=num_classes, repeats=[3,4,6,3])
 
-# a = tf.zeros([1,56,56,64])
-# b = tf.zeros([1,56,56,256])
-# conv_1 = Conv2DWithBN(filters=64, kernel_size=1, strides=1, padding='valid')
-# conv_2 = Conv2DWithBN(filters=64, kernel_size=3, strides=1, padding='same')
-# conv_3 = Conv2DWithBN(filters=(64 * 4), kernel_size=1, strides=1, padding='valid')
-# transform = Conv2DWithBN(filters=(64 * 4), kernel_size=1, strides=1, padding='same')
-# x = conv_1(a)
-# x = conv_2(x)
-# x = conv_3(x)
-# print("a shape: ", a.shape)
-# print("b shape: ", b.shape)
-# y = transform(b)
-# z = tf.add(x, y)
-# print(f"x: {x.shape} y: {y.shape} z: {z.shape}")
+def ResNet101(img_shape, num_classes):
+    return ResNet(img_shape=img_shape, num_classes=num_classes, repeats=[3,4,23,3])
+
+def ResNet152(img_shape, num_classes):
+    return ResNet(img_shape=img_shape, num_classes=num_classes, repeats=[3,8,36,3])
