@@ -83,7 +83,8 @@ class Block(Layer):
         
 
     def call(self, input, training):
-        if input.shape[2] != self.fs:
+        if input.shape[3] != self.fs * 4:
+            print(f'setting dotted true, in_channels: {input.shape} != filter_size: {self.fs} * 4')
             self.dotted = True
         x = input
         for i in range(3):
