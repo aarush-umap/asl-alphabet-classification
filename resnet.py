@@ -70,13 +70,6 @@ class Block(Layer):
         self.layers['conv_2'] = Conv2DWithBN(filters=filter_size, kernel_size=3, strides=stride, padding='same')
         self.layers['conv_3'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=1, padding='valid')
         self.layers['relu'] = ReLU()
-
-        print(f'\nBlock: {name}')
-        print(f'conv_1: Conv2DWithBN(filters={filter_size}, kernel_size={1}, strides={1}, padding=valid)')
-        print(f'conv_2: Conv2DWithBN(filters={filter_size}, kernel_size={3}, strides={stride}, padding=same)')
-        print(f'conv_3:Conv2DWithBN(filters=({filter_size} * 4), kernel_size={1}, strides={1}, padding=valid)')
-        print('relu')
-
         self.layers['transform'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=stride, padding='same')
         if stride == 1: self.dotted = False
         else: self.dotted = True
@@ -84,18 +77,14 @@ class Block(Layer):
 
     def call(self, input, training):
         if input.shape[3] != self.fs * 4:
-            print(f'setting dotted true, in_channels: {input.shape} != filter_size: {self.fs} * 4')
             self.dotted = True
         x = input
         for i in range(3):
             x = self.layers[f'conv_{i+1}'](x, training)
         if self.dotted:
-            print("transforming")
             y = self.layers['transform'](input, training)
-            # print(f'is dotted with x: {x.shape} and y: {y.shape}')
             x = tf.add(x, y)
         else:
-            # print(f'is not dotted with x: {x.shape} and y: {input.shape}')
             x = tf.add(x, input)
         return self.layers['relu'](x)
     
