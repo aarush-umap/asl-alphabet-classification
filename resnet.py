@@ -36,10 +36,10 @@ class ResNet(Model):
         self.layers['max_pool'] = MaxPooling2D(pool_size=3, strides=2)
 
         for i, repeat in enumerate(repeats):
-            curr_stride = 2
-            if i == 0:
-                curr_stride =1
             for j in range(repeat):
+                curr_stride = 2
+                if j != 0 or i == 0:
+                    curr_stride = 1
                 self.layers[f'conv_{i+1}_{j+1}'] = Block(filter_size=64, stride=curr_stride)
 
 
@@ -54,7 +54,7 @@ class Block(Layer):
         self.layers['transform'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=stride, padding=1)
         if stride == 1: self.dotted = False
         else: self.dotted = True
-        pass
+        
 
     def call(self, input):
         x = input
