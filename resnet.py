@@ -46,7 +46,7 @@ class ResNet(Model):
                 fs = filter_sizes[i]
                 # if j != 0:
                 #     fs = filter_sizes[i] * 4
-                self.all_layers[f'conv_{i+1}_{j+1}'] = Block(filter_size=fs, stride=curr_stride, name=(f'conv_{i+1}_{j+1}')) # TODO: fix filter size
+                self.all_layers[f'conv_{i+2}_{j+1}'] = Block(filter_size=fs, stride=curr_stride, name=(f'conv_{i+2}_{j+1}')) # TODO: fix filter size
         
         self.all_layers['global_avg_pool'] = GlobalAveragePooling2D()
         self.all_layers['fully_connected'] = Dense(units=num_classes, activation='softmax')
@@ -56,7 +56,7 @@ class ResNet(Model):
         x = self.all_layers['max_pool'](x)
         for i, repeat in enumerate(self.repeats):
             for j in range(repeat):
-                x = self.all_layers[f'conv_{i+1}_{j+1}'](x, training)
+                x = self.all_layers[f'conv_{i+2}_{j+1}'](x, training)
         x = self.all_layers['global_avg_pool'](x)
         x = self.all_layers['fully_connected'](x)
         return x
@@ -91,7 +91,7 @@ class Block(Layer):
         return self.layers['relu'](x)
     
 def ResNet50(img_shape, num_classes):
-    return ResNet(img_shape=img_shape, num_classes=num_classes, repeats=[3,4,6,4])
+    return ResNet(img_shape=img_shape, num_classes=num_classes, repeats=[3,4,6,3])
 
 # a = tf.zeros([1,56,56,64])
 # b = tf.zeros([1,56,56,256])
