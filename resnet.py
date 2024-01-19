@@ -89,6 +89,7 @@ class Block(Layer):
         for i in range(3):
             x = self.layers[f'conv_{i+1}'](x, training)
         if self.dotted:
+            print("transforming")
             y = self.layers['transform'](input, training)
             # print(f'is dotted with x: {x.shape} and y: {y.shape}')
             x = tf.add(x, y)
