@@ -1,7 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Layer, Conv2D, ReLU, BatchNormalization, MaxPooling2D, GlobalAveragePooling2D, Dense
 from tensorflow.keras import Model
-from tensorflow.keras.models import Sequential
 
 class Conv2DWithBN(Layer):
     def __init__(self, filters,
@@ -22,7 +21,7 @@ class ResNet(Model):
     def __init__(self, img_shape, num_classes, repeats=[3,4,6,3]):
         super(ResNet, self).__init__(name='ResNet')
         self.repeats = repeats
-                
+
         self.all_layers = {}
         self.all_layers['conv_1'] = Conv2DWithBN(filters=64, kernel_size=7, strides=2, padding='same')
         self.all_layers['max_pool'] = MaxPooling2D(pool_size=3, strides=2, padding='same')
@@ -49,8 +48,22 @@ class ResNet(Model):
         x = self.all_layers['fully_connected'](x)
         return x
 
+
 class Block(Layer):
     def __init__(self, filter_size, stride, name):
+        """
+        A custom layer setup to represent blocks from ResNet50, ResNet101, and ResNet152 architectures.
+        Each block consists of a 1x1 conv -> 3x3 conv -> 1x1 conv with a skip connection addition at the end.
+        There is a final transformation layer that can be learned if dimensions between skip connections
+        do not match.
+
+        Input:
+        - filter_size: initial filter size, output channels = filter_size * 4.
+        - stride: The number of pixels between adjacent receptive fields
+        in the horizontal and vertical directions.
+        - name: The name of the block (ex: 'conv_2_3')
+
+        """
         super(Block, self).__init__(name=name)
         self.fs = filter_size
         self.layers = {}
@@ -64,6 +77,7 @@ class Block(Layer):
         
 
     def call(self, input, training):
+        # TODO: add comments to call function to explain skip connections
         if input.shape[3] != self.fs * 4:
             self.dotted = True
         x = input
