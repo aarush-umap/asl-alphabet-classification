@@ -35,7 +35,7 @@ class ResNet(Model):
         
         self.all_layers = {}
         self.all_layers['conv_1'] = Conv2DWithBN(filters=64, kernel_size=7, strides=2, padding='same')
-        self.all_layers['max_pool'] = MaxPooling2D(pool_size=3, strides=2)
+        self.all_layers['max_pool'] = MaxPooling2D(pool_size=3, strides=2, padding='same')
 
         filter_sizes = [64, 128, 256, 512]
         for i, repeat in enumerate(repeats):
