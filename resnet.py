@@ -66,28 +66,53 @@ class Block(Layer):
         """
         super(Block, self).__init__(name=name)
         self.fs = filter_size
+
+        # init dictionary to hold all block layers
         self.layers = {}
+
+        # setup of conv layers
         self.layers['conv_1'] = Conv2DWithBN(filters=filter_size, kernel_size=1, strides=1, padding='valid')
         self.layers['conv_2'] = Conv2DWithBN(filters=filter_size, kernel_size=3, strides=stride, padding='same')
         self.layers['conv_3'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=1, padding='valid')
+
+        # set up of activation and transformation filter
         self.layers['relu'] = ReLU()
         self.layers['transform'] = Conv2DWithBN(filters=(filter_size * 4), kernel_size=1, strides=stride, padding='same')
+
+        # if H and W dimensionality will be reduced by stride, accounts by transforming 
+        # input to match the output shape
         if stride == 1: self.dotted = False
-        else: self.dotted = True
+        else: self.dotted = True 
         
 
     def call(self, input, training):
-        # TODO: add comments to call function to explain skip connections
+        """
+        The forward function that updates input by sending it through 3 convolutional filters (each followed by 
+        ReLU activation and batch normalization). The output of the convolutional filters is then added with the
+        starting input (shape adjusted).
+
+        Input:
+        - input: tensor with shape (B x H x W x C)
+        - training: boolean that dictates whether batch normalization should update or use running parameters
+
+        """
+
+        # if num_channels of the input is not the same size as the output shape, transform input
         if input.shape[3] != self.fs * 4:
             self.dotted = True
+
+        # Handles all 3 convolutional filters
         x = input
         for i in range(3):
             x = self.layers[f'conv_{i+1}'](x, training)
+
+        # Handles matching sizes between input and output
         if self.dotted:
             y = self.layers['transform'](input, training)
             x = tf.add(x, y)
         else:
             x = tf.add(x, input)
+        
         return self.layers['relu'](x)
     
 def ResNet50(img_shape, num_classes):
