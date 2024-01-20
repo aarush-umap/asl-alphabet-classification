@@ -3,15 +3,34 @@ from tensorflow.keras.layers import Layer, Conv2D, ReLU, BatchNormalization, Max
 from tensorflow.keras import Model
 
 class Conv2DWithBN(Layer):
-    def __init__(self, filters,
-                kernel_size,
-                strides,
-                padding):
+    def __init__(self, filters, kernel_size, strides, padding):
+        """
+        A custom combination layer that consists of a convolutional filter, with ReLU, followed by
+        batch normalization.
+
+        Input
+        - filters: number of filters
+        - kernel_size: integer or tuple of integers that dictate the size of the filters (kernel_size by kernel_size)
+        - strides: integer or tuple of ints that dictate the # of pixels to shift each filter over the input
+        - padding: one of two strings - 'valid' or 'same' - where 'valid' means no padding and 'same' keeps
+        dimensionality
+
+        """
         super(Conv2DWithBN, self).__init__()
         self.conv = Conv2D(filters, kernel_size, strides, padding=padding, activation='relu')
         self.bn = BatchNormalization()
 
     def call(self, input, training):
+        """
+        The forward function of the custom layer that applies a conv filter, ReLU, and batch normalization.
+
+        Input:
+        - input: a tensor of shape (B x H x W x C).
+        - training: boolean that determines what mode of batch normalization will be used.
+
+        Returns:
+        - x: the output after applying all individual layers.
+        """
         x = self.conv(input)
         x = self.bn(x, training)
         return x
@@ -61,7 +80,7 @@ class Block(Layer):
         - filter_size: initial filter size, output channels = filter_size * 4.
         - stride: The number of pixels between adjacent receptive fields
         in the horizontal and vertical directions.
-        - name: The name of the block (ex: 'conv_2_3')
+        - name: The name of the block (ex: 'conv_2_3').
 
         """
         super(Block, self).__init__(name=name)
@@ -92,9 +111,11 @@ class Block(Layer):
         starting input (shape adjusted).
 
         Input:
-        - input: tensor with shape (B x H x W x C)
-        - training: boolean that dictates whether batch normalization should update or use running parameters
+        - input: tensor with shape (B x H x W x C).
+        - training: boolean that dictates whether batch normalization should update or use running parameters.
 
+        Returns:
+        - x: a tensor after applying ReLU.
         """
 
         # if num_channels of the input is not the same size as the output shape, transform input
