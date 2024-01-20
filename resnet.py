@@ -37,7 +37,7 @@ class Conv2DWithBN(Layer):
         
 
 class ResNet(Model):
-    def __init__(self, num_classes, repeats=[3,4,6,3]):
+    def __init__(self, num_classes, name, repeats=[3,4,6,3]):
         """
         A modular ResNet model based on different combinations of custom block layers. Models follow the same basic 
         structure, starting with a 7x7 conv layer and 3x3 max pool, followed by skip connection blocks repeated
@@ -46,10 +46,11 @@ class ResNet(Model):
 
         Input:
         - num_classes: number of classification classes.
+        - name: type of resnet model
         - repeats: list of ints that dictates how many blocks of each filter size [64, 128, 256, 512] will be 
         added to the model.
         """
-        super(ResNet, self).__init__(name='ResNet')
+        super(ResNet, self).__init__(name=name)
         self.repeats = repeats
 
         self.all_layers = {}
@@ -180,7 +181,7 @@ def ResNet50(num_classes):
     Returns:
     - an instace of ResNet50
     """
-    return ResNet(num_classes=num_classes, repeats=[3,4,6,3])
+    return ResNet(num_classes=num_classes, name='ResNet50', repeats=[3,4,6,3])
 
 def ResNet101(num_classes):
     """
@@ -192,7 +193,7 @@ def ResNet101(num_classes):
     Returns:
     - an instace of ResNet101
     """
-    return ResNet(num_classes=num_classes, repeats=[3,4,23,3])
+    return ResNet(num_classes=num_classes, name='ResNet101', repeats=[3,4,23,3])
 
 def ResNet152(num_classes):
     """
@@ -204,4 +205,4 @@ def ResNet152(num_classes):
     Returns:
     - an instace of ResNet152
     """
-    return ResNet(num_classes=num_classes, repeats=[3,8,36,3])
+    return ResNet(num_classes=num_classes, name='ResNet152', repeats=[3,8,36,3])
