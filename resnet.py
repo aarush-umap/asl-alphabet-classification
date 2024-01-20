@@ -168,11 +168,40 @@ class Block(Layer):
         
         return self.layers['relu'](x)
     
+
+
 def ResNet50(num_classes):
+    """
+    Creates an instance of a ResNet50 model.
+
+    Input:
+    - num_classes: number of classes in dataset
+
+    Returns:
+    - an instace of ResNet50
+    """
     return ResNet(num_classes=num_classes, repeats=[3,4,6,3])
 
 def ResNet101(num_classes):
+    """
+    Creates an instance of a ResNet101 model.
+
+    Input:
+    - num_classes: number of classes in dataset
+
+    Returns:
+    - an instace of ResNet101
+    """
     return ResNet(num_classes=num_classes, repeats=[3,4,23,3])
 
 def ResNet152(num_classes):
+    """
+    Creates an instance of a ResNet152 model.
+
+    Input:
+    - num_classes: number of classes in dataset
+
+    Returns:
+    - an instace of ResNet152
+    """
     return ResNet(num_classes=num_classes, repeats=[3,8,36,3])
